@@ -6,24 +6,23 @@ Description:
     This file contains definition of functions and
     variables necessary for general tensorrt operations 
 */
+#ifndef GENERIC_HPP_
+#define GENERIC_HPP_
+
 // Includes
 // C++ Std libraries
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <memory>
 
 // Cuda Libraries
 #include "cuda_runtime.h"
+#include "cuda_runtime_api.h"
 #include "cuda.h"
 #include "NvInfer.h"
 #include "NvInferPlugin.h"
 #include "NvOnnxParser.h"
-
-// Jetpack Libraries
-#include "jetson-utils/logging.h"
-#include "jetson-utils/cudaMappedMemory.h"
-#include "jetson-utils/imageIO.h"
-#include "jetson-utils/imageIO.h"
 
 // Namespace
 namespace nvi = nvinfer1;
@@ -31,6 +30,17 @@ namespace nvp = nvonnxparser;
 
 // Constants
 
+// CUDA Error Checking
+#define CUDA(thing) { gpuAssert((thing), __FILE__, __LINE__);}
+inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true){
+    if (code != cudaSuccess){
+        fprintf(stderr, "CUDA ERROR: %s %s %d\n", cudaGetErrorString(code),
+            file, line);
+        if (abort){
+            exit(code);
+        }
+    }
+}
 
 // Functions
 namespace jetsontrt {
@@ -52,7 +62,7 @@ class Inferer{
     std::vector<nvi::Dims32> output_dims_;
     std::shared_ptr<nvi::ICudaEngine> engine_;
     std::shared_ptr<nvi::IExecutionContext> context_;
-    std::shared_ptr<nvi::IParser> parser_;
+    std::shared_ptr<nvp::IParser> parser_;
     std::shared_ptr<nvi::IRuntime> runtime_;
     std::shared_ptr<cudaStream_t> stream_;
 
@@ -64,7 +74,6 @@ class Inferer{
     void BuildContext();
     void Infer();
     void FreeBuffers();
+};
 }
-
-
-}
+#endif //GENERIC_HPP
