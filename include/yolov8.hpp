@@ -1,12 +1,13 @@
 /*
-File: yolov8.hpp
-Author: Dylan Baxter
-Date: 3/8/23
-Description: 
-    This file contains declaration for functions and
-    variables necessary for the functioning of yolov8
-    in tensorrt.
-*/
+ * File: yolov8.hpp
+ * Author: Dylan Baxter
+ * Date: 3/8/23
+ * Description:
+ *     This file contains declarations for functions and
+ *     variables necessary for the functioning of YOLOv8
+ *     in TensorRT.
+ */
+
 #ifndef YOLOV8_HPP_
 #define YOLOV8_HPP_
 
@@ -14,31 +15,35 @@ Description:
 #include "opencv4/opencv2/opencv.hpp"
 #include "generic.hpp"
 
-// Functions
-namespace jetsontrt::yolov8{
-    struct bbox{
-        int cls_id;
-        std::string cls_name;
-        float conf;
-        int x;
-        int y;
-        int w;
-        int h;
-    };
+// Namespace Declarations
+namespace jetsontrt::yolov8 {
 
-    class Yolov8 : public Inferer{
-        protected:
-        Configuration config_;
+// Structure for bounding boxes
+struct Bbox {
+  int cls_id;
+  std::string cls_name;
+  float conf;
+  int x;
+  int y;
+  int w;
+  int h;
+};
 
+// YOLOv8 Inference Class
+class Yolov8 : public Inferer {
+ protected:
+  Configuration config_;
 
-        public:
-        Yolov8(const Configuration config);
-        void preprocess(const cv::Mat &im);
-        std::vector<bbox> postprocess();
-        std::vector<bbox> RunYOLOv8(const cv::Mat &im);
-    };
+ public:
+  explicit Yolov8(const Configuration& config);
+  void preprocess(const cv::Mat& im);
+  std::vector<Bbox> postprocess();
+  std::vector<Bbox> RunYOLOv8(const cv::Mat& im);
+};
 
-    void drawBoxes(const cv::Mat &im,const std::vector<bbox> &bbox_list);
-    
-}
-#endif //YOLOV8_HPP_
+// Function to draw bounding boxes on the image
+void drawBoxes(const cv::Mat& im, const std::vector<Bbox>& bbox_list);
+
+}  // namespace jetsontrt::yolov8
+
+#endif  // YOLOV8_HPP_
