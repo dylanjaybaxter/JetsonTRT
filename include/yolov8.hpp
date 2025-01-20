@@ -23,14 +23,17 @@ const std::map<int, std::string> kNameMap = {
 
 namespace jetsontrt::yolov8 {
 
+/**
+ * @brief Structure representing a bounding box.
+ */
 struct Bbox {
-  int cls_id;
-  std::string cls_name;
-  float conf;
-  int x;
-  int y;
-  int w;
-  int h;
+  int cls_id;            /// Class ID of the detected object
+  std::string cls_name;  /// Name of the detected class
+  float conf;            /// Confidence score of the detection
+  int x;                 /// X-coordinate of the top-left corner
+  int y;                 /// Y-coordinate of the top-left corner
+  int w;                 /// Width of the bounding box
+  int h;                 /// Height of the bounding box
 };
 
 class Yolov8 : public Inferer {
@@ -38,14 +41,38 @@ class Yolov8 : public Inferer {
   Configuration config_;
 
  public:
+  /**
+   * @brief Constructs a Yolov8 object with the given configuration.
+   * @param config The configuration specifying paths and workspace size.
+   */
   explicit Yolov8(const Configuration& config);
-  std::vector<Bbox> RunYOLOv8(const cv::Mat& im);
- private:
-  void preprocess(const cv::Mat& im);
-  std::vector<Bbox> postprocess();
 
+  /**
+   * @brief Runs inference on the given image and returns detected bounding boxes.
+   * @param im Input image in OpenCV Mat format.
+   * @return A vector of detected bounding boxes.
+   */
+  std::vector<Bbox> runYolov8(const cv::Mat& im);
+
+ private:
+  /**
+   * @brief Preprocesses the input image before inference.
+   * @param im Input image in OpenCV Mat format.
+   */
+  void preprocess(const cv::Mat& im);
+
+  /**
+   * @brief Processes inference output and extracts bounding boxes.
+   * @return A vector of detected bounding boxes.
+   */
+  std::vector<Bbox> postprocess();
 };
 
+/**
+ * @brief Draws bounding boxes on the given image.
+ * @param im Input image.
+ * @param bbox_list List of bounding boxes to be drawn.
+ */
 void drawBoxes(const cv::Mat& im, const std::vector<Bbox>& bbox_list);
 
 }  // namespace jetsontrt::yolov8

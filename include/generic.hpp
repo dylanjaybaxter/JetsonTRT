@@ -59,18 +59,58 @@ class Inferer {
   std::shared_ptr<cudaStream_t> stream_;
 
  public:
+  /**
+   * @brief Constructs an Inferer object with the given configuration.
+   * @param config The configuration specifying paths and workspace size.
+   */
   explicit Inferer(const Configuration& config);
-  bool Infer();
-  
- private:
+
+  /**
+   * @brief Runs inference on the loaded model.
+   * @return True if inference is successful, false otherwise.
+   */
+  bool infer();
+
   ~Inferer();
-  bool ReadEngineFromOnnx(const std::string& onnx_path, const std::string& eng_path);
-  bool ReadEngineFromFile(const std::string& eng_path);
-  bool WriteEngine(const std::string& eng_path);
-  bool BuildEngine(const std::vector<char> &serialized_engine);
-  void AllocateBuffers();
-  void BuildContext();
-  
+
+  /**
+   * @brief Reads an engine from an ONNX file and serializes it.
+   * @param onnx_path Path to the ONNX model file.
+   * @param eng_path Path to save the serialized engine.
+   * @return True if successful, false otherwise.
+   */
+  bool readEngineFromOnnx(const std::string& onnx_path, const std::string& eng_path);
+
+  /**
+   * @brief Reads an engine from a serialized file.
+   * @param eng_path Path to the serialized engine file.
+   * @return True if successful, false otherwise.
+   */
+  bool readEngineFromFile(const std::string& eng_path);
+
+  /**
+   * @brief Writes the current engine to a file.
+   * @param eng_path Path where the engine should be saved.
+   * @return True if successful, false otherwise.
+   */
+  bool writeEngine(const std::string& eng_path);
+
+  /**
+   * @brief Builds an engine from a serialized engine buffer.
+   * @param serialized_engine The buffer containing the serialized engine.
+   * @return True if successful, false otherwise.
+   */
+  bool buildEngine(const std::vector<char>& serialized_engine);
+
+  /**
+   * @brief Allocates memory buffers for inference execution.
+   */
+  void allocateBuffers();
+
+  /**
+   * @brief Creates an execution context for inference.
+   */
+  void buildContext();
 };
 
 }  // namespace jetsontrt
