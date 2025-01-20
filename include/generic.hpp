@@ -10,14 +10,10 @@
 #ifndef GENERIC_HPP_
 #define GENERIC_HPP_
 
-// Includes
-// C++ Standard Libraries
 #include <string>
 #include <fstream>
 #include <memory>
 #include <vector>
-
-// CUDA Libraries
 #include "cuda_runtime.h"
 #include "cuda_runtime_api.h"
 #include "cuda.h"
@@ -25,11 +21,9 @@
 #include "NvInferPlugin.h"
 #include "NvOnnxParser.h"
 
-// Namespace Definitions
 namespace nvi = nvinfer1;
 namespace nvp = nvonnxparser;
 
-// CUDA Error Checking
 #define CUDA_CHECK_CALL(call) { gpuAssert((call), __FILE__, __LINE__); }
 
 inline void gpuAssert(cudaError_t code, const char* file, int line, bool abort = true) {
@@ -41,7 +35,6 @@ inline void gpuAssert(cudaError_t code, const char* file, int line, bool abort =
   }
 }
 
-// Function Declarations
 namespace jetsontrt {
 
 struct Configuration {
@@ -67,12 +60,17 @@ class Inferer {
 
  public:
   explicit Inferer(const Configuration& config);
-  void BuildEngine(const std::string& onnx_path, const std::string& eng_path);
-  void ReadEngine(const std::string& eng_path);
+  bool Infer();
+  
+ private:
+  ~Inferer();
+  bool ReadEngineFromOnnx(const std::string& onnx_path, const std::string& eng_path);
+  bool ReadEngineFromFile(const std::string& eng_path);
+  bool WriteEngine(const std::string& eng_path);
+  bool BuildEngine(const std::vector<char> &serialized_engine);
   void AllocateBuffers();
   void BuildContext();
-  void Infer();
-  void FreeBuffers();
+  
 };
 
 }  // namespace jetsontrt

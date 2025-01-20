@@ -5,7 +5,6 @@ set(CMAKE_BUILD_TYPE Debug)
 
 if(CMAKE_COMPILER_ISGNUXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra -Wpedantic)
-    add_compile_options(-std=c++17)
 endif()
 
 # Find OpenCV

@@ -14,18 +14,10 @@
 #include "yolov8.hpp"
 #include <spdlog/spdlog.h>
 
-// Constants
-const std::map<int, std::string> kNameMap = {
-    {0, "shark"},
-    {1, "boatdolphin"},
-    {2, "person"},
-    {3, "seal"}
-};
-
 namespace jetsontrt::yolov8 {
 
 Yolov8::Yolov8(const Configuration& config) : Inferer(config) {
-  // Explicitly call the generic constructor
+
 }
 
 std::vector<bbox> Yolov8::RunYOLOv8(const cv::Mat& im) {
@@ -33,10 +25,14 @@ std::vector<bbox> Yolov8::RunYOLOv8(const cv::Mat& im) {
   preprocess(im);
 
   // Run inference
-  Infer();
+  bool ret = Infer();
 
   // Post process output
-  return postprocess();
+  if(!ret){
+    return std::vector<bbox>();
+  }else{
+    return postprocess();
+  }
 }
 
 void Yolov8::preprocess(const cv::Mat& im) {
@@ -66,7 +62,7 @@ void Yolov8::preprocess(const cv::Mat& im) {
   std::vector<cv::Mat> channels(3);
   cv::split(norm_mat, channels);
 
-  assert(inBuff_.at(0));
+  // Load Preprocessed Image To Input Memory
   int mat_size = net_h * net_w;
   for (int i = 0; i < channels.size(); i++) {
     CUDA(cudaMemcpy(reinterpret_cast<_Float32*>(inBuff_.at(0)) + (mat_size * i),
